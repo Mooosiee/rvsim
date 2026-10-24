@@ -1,0 +1,42 @@
+name: build-and-test
+on: [push, pull_request]
+jobs:
+  formatting:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install clang-format==19.1.7 -r requirements-format.txt
+      - run: python scripts/format_code.py --check
+  native:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+      - run: cmake --build build --config Debug --parallel 2
+      - run: ctest --test-dir build -C Debug --output-on-failure
+  sanitizers:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DRVSIM_SANITIZERS=ON
+      - run: cmake --build build --parallel 2
+      - run: ctest --test-dir build --output-on-failure
+  rebuild-demos:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install ziglang==0.14.1
+      - run: python scripts/build_demos.py --zig "$(python -c 'import ziglang,pathlib; print(pathlib.Path(ziglang.__file__).parent / "zig")')" --check
+      - run: cmake -S . -B build && cmake --build build --parallel 2 && ctest --test-dir build --output-on-failure

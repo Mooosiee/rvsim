@@ -1,0 +1,10 @@
+{
+  "fibonacci": {"registers": {"10": 55}, "words": {}},
+  "array_sum": {"registers": {"10": 3, "11": 9}, "words": {"0x201c": 3, "0x2020": 9}},
+  "bubble_sort": {"registers": {"10": 0}, "arrays": {"0x2000": [-9, -3, -3, 0, 2, 7, 7]}},
+  "nth_prime": {"registers": {"10": 29}, "words": {}},
+  "alu_chain": {"registers": {"10": 7}, "words": {}, "timing": {"on": 9, "off": 15}},
+  "load_use": {"registers": {"10": 42}, "words": {"0x2000": 21}, "timing": {"on": 10, "off": 15}},
+  "branch_flush": {"registers": {"10": 42}, "words": {"0x2000": 0}},
+  "freestanding": {"registers": {"10": 30}, "words": {"0x2010": 30}}
+}

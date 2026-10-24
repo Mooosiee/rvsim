@@ -1,0 +1,68 @@
+RISC-V Simulator - start here
+============================
+
+1. Extract the whole ZIP before running anything.
+2. Open the extracted "rvsim" folder in File Explorer.
+3. Open PowerShell/Terminal in that folder.
+
+WINDOWS X64: RUN THE INCLUDED EXECUTABLE
+
+If this package contains rvsim.exe, you do not need to install C++, CMake,
+Python, or a RISC-V compiler just to run it.
+
+    .\rvsim.exe --help
+
+    .\rvsim.exe --program demos/prebuilt/fibonacci.elf --format elf
+
+The Fibonacci result should be:
+
+    a0 = 0x00000037 unsigned=55 signed=55
+
+Try pipeline mode and the debugger:
+
+    .\rvsim.exe --program demos/prebuilt/alu_chain.elf --format elf --model pipeline --debug
+
+Enter "help" for commands, "step" to reach the next instruction boundary,
+"registers" to see registers, "continue" to finish, and "quit" to exit.
+The ALU demo finishes with a0 = 7.
+
+This is a command-line program. Double-clicking the EXE may open and close a
+console immediately; run it from a terminal with the arguments shown above.
+
+TO EDIT AND BUILD THE SOURCE
+
+Install a C++17 compiler, CMake 3.20+, and Python 3.10+. On Windows with GCC
+and Ninja available, run:
+
+    cmake -S . -B build -G Ninja -DCMAKE_CXX_COMPILER=g++ -DCMAKE_BUILD_TYPE=Debug
+    cmake --build build
+    ctest --test-dir build --output-on-failure
+    .\build\rvsim.exe --program demos/prebuilt/fibonacci.elf --format elf
+
+For Visual Studio or Linux build commands, read README.md. The included EXE
+is Windows x64 only; other systems need their own native build. Linux build
+instructions are supplied, but this delivery was tested on Windows.
+
+RUN ALL THE DEMONSTRATIONS
+
+If Python is installed, the Windows executable package supports:
+
+    python scripts/run_demos.py --sim rvsim.exe
+
+A source build uses:
+
+    python scripts/run_demos.py --sim build/rvsim.exe
+
+The checker runs 48 combinations and verifies their results. The supplied
+ELF/raw demo binaries let you run the demos without a RISC-V cross-toolchain.
+
+WHERE TO START READING
+
+    docs/INSTRUCTION_REFERENCE.md  Registers, instruction meanings, worked example
+    src/machine.cpp               Read functional_tick() before pipeline_tick()
+    docs/USER_GUIDE.md             Options, debugger commands, traces, exit codes
+    docs/SHARING.md                What belongs in a shared package
+    docs/UPSTREAM.md               References and authorship
+
+Python scripts are development helpers. The CPU simulator itself is C++.
+Optional Spike validation was not run on the original host; see docs/TESTING.md.
